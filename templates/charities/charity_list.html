@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}الجمعيات الخيرية{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for charity in charities %}
+    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden transition duration-150">
+        {% if charity.logo %}
+            <img src="{{ charity.logo.url }}" alt="{{ charity.name }}" class="w-full h-48 object-cover">
+        {% endif %}
+        <div class="p-6">
+            <h2 class="text-xl font-bold mb-2 dark:text-white">{{ charity.name }}</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">{{ charity.description|truncatewords:30 }}</p>
+            <div class="flex justify-between items-center gap-2">
+                <a href="{% url 'charities:charity_detail' charity.pk %}" 
+                   class="bg-blue-500 dark:bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-600 dark:hover:bg-blue-700 transition duration-150">
+                    التفاصيل
+                </a>
+                {% if charity.donation_link %}
+                <a href="{{ charity.donation_link }}" 
+                   target="_blank"
+                   class="bg-green-500 dark:bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-600 dark:hover:bg-green-700 transition duration-150">
+                    تقديم مساعدة
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-span-full text-center py-8">
+        <p class="text-gray-500 dark:text-gray-400">لا توجد جمعيات خيرية متاحة حالياً</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ charity.name }}{% endblock %}
+
+{% block content %}
+<div class="bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden transition duration-150">
+    <div class="p-6">
+        <div class="flex items-center mb-6">
+            {% if charity.logo %}
+                <img src="{{ charity.logo.url }}" alt="{{ charity.name }}" class="w-24 h-24 object-cover rounded-full ring-2 ring-gray-200 dark:ring-gray-600">
+            {% endif %}
+            <div class="mr-6">
+                <h1 class="text-2xl font-bold dark:text-white">{{ charity.name }}</h1>
+                <p class="text-gray-600 dark:text-gray-300">{{ charity.email }} | {{ charity.phone }}</p>
+            </div>
+        </div>
+        
+        <div class="mb-6">
+            <h2 class="text-xl font-bold mb-2 dark:text-white">عن الجمعية</h2>
+            <p class="text-gray-700 dark:text-gray-300">{{ charity.description }}</p>
+        </div>
+
+        <div class="mb-6">
+            <h2 class="text-xl font-bold mb-2 dark:text-white">العنوان</h2>
+            <p class="text-gray-700 dark:text-gray-300">{{ charity.address }}</p>
+        </div>
+
+        {% if charity.assistance_links.exists %}
+        <div class="mb-6">
+            <h2 class="text-xl font-bold mb-2 dark:text-white">روابط المساعدة</h2>
+            <div class="space-y-3">
+                {% for link in charity.assistance_links.all %}
+                    {% if link.is_active %}
+                        <div>
+                            <a href="{{ link.url }}" 
+                               target="_blank"
+                               class="inline-block bg-green-500 dark:bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-600 dark:hover:bg-green-700 transition duration-150">
+                                <span class="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                    {{ link.title }}
+                                </span>
+                            </a>
+                            {% if link.description %}
+                                <p class="mt-2 text-gray-600 dark:text-gray-400 text-sm">{{ link.description }}</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+            <div class="mt-8">
+                <h2 class="text-xl font-bold mb-4 dark:text-white">تقديم طلب مساعدة</h2>
+                <a href="{% url 'charities:aid_request_create' %}?charity={{ charity.pk }}" 
+                   class="bg-green-500 dark:bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-600 dark:hover:bg-green-700 transition duration-150">
+                    تقديم طلب جديد
+                </a>
+            </div>
+        {% else %}
+            <div class="bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 p-4">
+                <p class="text-yellow-700 dark:text-yellow-200">
+                    يجب تسجيل الدخول أولاً لتتمكن من تقديم طلب مساعدة.
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="underline hover:text-yellow-800 dark:hover:text-yellow-100 transition duration-150">تسجيل الدخول</a>
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

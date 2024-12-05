@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% block title %}{{ news.title }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <!-- تفاصيل الخبر الرئيسي -->
+        <div class="lg:col-span-3">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                {% if news.image %}
+                <img src="{{ news.image.url }}" alt="{{ news.title }}" class="w-full h-64 object-cover">
+                {% endif %}
+                
+                <div class="p-6">
+                    <div class="mb-6">
+                        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">{{ news.title }}</h1>
+                        <div class="flex items-center text-gray-600 dark:text-gray-400 text-sm">
+                            <span>{{ news.publication_date|date:"d/m/Y" }}</span>
+                            <span class="mx-2">•</span>
+                            <a href="{{ news.charity.get_absolute_url }}" class="text-blue-500 hover:text-blue-600">{{ news.charity.name }}</a>
+                            <span class="mx-2">•</span>
+                            <span>{{ news.views_count }} مشاهدة</span>
+                        </div>
+                    </div>
+
+                    <!-- الوسوم -->
+                    {% if news.tags %}
+                    <div class="mb-6">
+                        <div class="flex flex-wrap gap-2">
+                            {% for tag in news.get_tags_list %}
+                            <a href="{% url 'charities:news_list' %}?tag={{ tag }}" 
+                               class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
+                                {{ tag }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="prose dark:prose-invert max-w-none">
+                        {{ news.content|linebreaks }}
+                    </div>
+
+                    <!-- الأخبار المشابهة -->
+                    {% if similar_news %}
+                    <div class="mt-12 border-t pt-8">
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">أخبار مشابهة</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {% for similar in similar_news %}
+                            <a href="{% url 'charities:news_detail' similar.pk %}" class="group">
+                                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                                    {% if similar.image %}
+                                    <img src="{{ similar.image.url }}" alt="{{ similar.title }}" class="w-full h-48 object-cover">
+                                    {% endif %}
+                                    <div class="p-4">
+                                        <h4 class="font-bold text-gray-800 dark:text-white group-hover:text-blue-500 transition-colors duration-200">{{ similar.title }}</h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ similar.content|truncatewords:15 }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-8 border-t pt-6">
+                        <a href="{% url 'charities:news_list' %}" class="inline-flex items-center text-blue-500 hover:text-blue-600">
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                            العودة إلى قائمة الأخبار
+                        </a>
+                    </div>
+                    
+                    {% if user.is_authenticated and news.social_publish %}
+                    <div class="mt-4 space-y-2">
+                        <div class="flex items-center space-x-2 space-x-reverse">
+                            <input type="checkbox" id="publishConsent" class="rounded text-blue-500 focus:ring-blue-500">
+                            <label for="publishConsent" class="text-sm text-gray-600 dark:text-gray-400">
+                                أوافق على نشر هذا المحتوى على وسائل التواصل الاجتماعي
+                            </label>
+                        </div>
+                        <button onclick="publishContent('news', {{ news.pk }})" 
+                                id="publishButton"
+                                disabled
+                                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center opacity-50 cursor-not-allowed">
+                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
+                            </svg>
+                            نشر على وسائل التواصل
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- الأخبار المهمة في الجانب -->
+        <div class="lg:col-span-1">
+            {% if important_news %}
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold mb-6 text-red-600 dark:text-red-400 flex items-center">
+                    <svg class="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/>
+                    </svg>
+                    أخبار مهمة أخرى
+                </h2>
+                
+                <div class="space-y-6">
+                    {% for news in important_news %}
+                    <div class="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0 last:pb-0">
+                        {% if news.image %}
+                        <img src="{{ news.image.url }}" alt="{{ news.title }}" class="w-full h-32 object-cover rounded-lg mb-3">
+                        {% endif %}
+                        <h3 class="font-semibold text-gray-800 dark:text-white mb-2">{{ news.title }}</h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">{{ news.content|truncatewords:15 }}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">{{ news.publication_date|date:"d/m/Y" }}</span>
+                            <a href="{% url 'charities:news_detail' news.pk %}" class="text-red-500 hover:text-red-600 text-sm">
+                                قراءة المزيد
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// إضافة مستمع لحدث تغيير حالة مربع الاختيار
+document.getElementById('publishConsent').addEventListener('change', function() {
+    const publishButton = document.getElementById('publishButton');
+    publishButton.disabled = !this.checked;
+    if (this.checked) {
+        publishButton.classList.remove('opacity-50', 'cursor-not-allowed');
+    } else {
+        publishButton.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+});
+
+function publishContent(modelType, pk) {
+    const consentCheckbox = document.getElementById('publishConsent');
+    if (!consentCheckbox.checked) {
+        alert('يرجى الموافقة على النشر أولاً');
+        return;
+    }
+
+    // عرض رسالة تحميل
+    const button = document.getElementById('publishButton');
+    const originalText = button.innerHTML;
+    button.innerHTML = `<svg class="animate-spin h-5 w-5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg> جاري النشر...`;
+    button.disabled = true;
+
+    // إرسال طلب النشر
+    fetch(`/charities/publish/${modelType}/${pk}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // عرض رسالة نجاح
+            alert('تم النشر بنجاح على: ' + data.success_platforms.join(', '));
+            // إعادة تعيين مربع الاختيار
+            consentCheckbox.checked = false;
+        } else {
+            // عرض رسالة خطأ
+            alert('حدث خطأ أثناء النشر: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('حدث خطأ أثناء النشر');
+    })
+    .finally(() => {
+        button.innerHTML = originalText;
+        button.disabled = true;
+        button.classList.add('opacity-50', 'cursor-not-allowed');
+    });
+}
+</script>
+{% endblock %}

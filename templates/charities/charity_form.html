@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}{% if form.instance.pk %}تعديل الجمعية{% else %}إضافة جمعية جديدة{% endif %}{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-12">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+            <h2 class="text-3xl font-bold mb-8 text-gray-800 dark:text-white text-center">
+                {% if form.instance.pk %}تعديل الجمعية{% else %}إضافة جمعية جديدة{% endif %}
+            </h2>
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
+                    <label class="block text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2" for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+                    <div class="mt-1">
+                        {% if field.name == 'logo' %}
+                            <div class="flex items-center justify-center w-full">
+                                <label for="{{ field.id_for_label }}" class="flex flex-col w-full h-32 border-4 border-dashed hover:bg-gray-100 hover:border-gray-300 dark:hover:bg-gray-600 cursor-pointer relative">
+                                    <div class="flex flex-col items-center justify-center pt-7">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400 group-hover:text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+                                        </svg>
+                                        <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
+                                            {% if field.value %}الصورة الحالية: {{ field.value }}{% else %}اختر صورة الشعار{% endif %}
+                                        </p>
+                                    </div>
+                                    {% render_field field class="hidden" id=field.auto_id %}
+                                    {% if field.value %}
+                                        <div class="absolute top-2 left-2">
+                                            <label class="inline-flex items-center">
+                                                <input type="checkbox" name="{{ field.name }}-clear" id="{{ field.auto_id }}_clear" class="form-checkbox h-4 w-4 text-red-600">
+                                                <span class="mr-2 text-sm text-gray-600 dark:text-gray-300">حذف الصورة</span>
+                                            </label>
+                                        </div>
+                                    {% endif %}
+                                </label>
+                            </div>
+                        {% elif field.name == 'description' %}
+                            {% render_field field class="w-full px-4 py-2 text-base text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:border-blue-500 h-32 resize-none" placeholder="أدخل وصف الجمعية هنا..." %}
+                        {% elif field.name == 'is_active' %}
+                            <label class="inline-flex items-center mt-2">
+                                {% render_field field class="form-checkbox h-5 w-5 text-blue-600 rounded" %}
+                                <span class="mr-2 text-gray-700 dark:text-gray-200">نشط</span>
+                            </label>
+                        {% else %}
+                            {% render_field field class="w-full px-4 py-2 text-base text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:border-blue-500" placeholder=field.label %}
+                        {% endif %}
+                        
+                        {% if field.help_text %}
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ field.help_text }}</p>
+                        {% endif %}
+                        {% for error in field.errors %}
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="flex justify-end space-x-3 space-x-reverse mt-8">
+                    <button type="submit" 
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg shadow-md transition duration-300 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        {% if form.instance.pk %}تحديث{% else %}إضافة{% endif %}
+                    </button>
+                    <a href="{% url 'charities:charity_dashboard' %}" 
+                       class="bg-gray-500 hover:bg-gray-600 text-white px-8 py-3 rounded-lg shadow-md transition duration-300 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                        إلغاء
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

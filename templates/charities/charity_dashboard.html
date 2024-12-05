@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}لوحة تحكم الجمعيات{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-12">
+    <div class="container mx-auto px-4">
+        <!-- Tabs -->
+        <div class="mb-8">
+            <div class="border-b border-gray-200 dark:border-gray-700">
+                <nav class="flex -mb-px" aria-label="Tabs">
+                    <button onclick="switchTab('charities')" id="charities-tab" class="tab-button active px-6 py-3 border-b-2 font-medium text-sm">
+                        الجمعيات
+                    </button>
+                    <button onclick="switchTab('news')" id="news-tab" class="tab-button px-6 py-3 border-b-2 font-medium text-sm">
+                        الأخبار
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Charities Section -->
+        <div id="charities-section" class="tab-content">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <div class="lg:w-full">
+                    <h1 class="text-4xl font-bold mb-8 text-gray-800 dark:text-white text-center">إدارة الجمعيات</h1>
+                    
+                    <!-- زر إضافة جمعية جديدة -->
+                    <div class="mb-6 flex justify-end">
+                        <a href="{% url 'charities:charity_create' %}" 
+                           class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md transition duration-300 flex items-center">
+                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            إضافة جمعية جديدة
+                        </a>
+                    </div>
+
+                    <!-- جدول الجمعيات -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-gray-100 dark:bg-gray-700">
+                                <tr>
+                                    <th class="px-6 py-4 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">اسم الجمعية</th>
+                                    <th class="px-6 py-4 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">الحالة</th>
+                                    <th class="px-6 py-4 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">تاريخ الإنشاء</th>
+                                    <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600 dark:text-gray-300">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                {% for charity in charities %}
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150">
+                                    <td class="px-6 py-4 text-right">{{ charity.name }}</td>
+                                    <td class="px-6 py-4 text-right">
+                                        {% if charity.is_active %}
+                                        <span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">نشط</span>
+                                        {% else %}
+                                        <span class="px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">غير نشط</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-4 text-right">{{ charity.created_at|date:"Y/m/d" }}</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex justify-center space-x-2 space-x-reverse">
+                                            <a href="{% url 'charities:charity_edit' charity.pk %}" class="text-blue-500 hover:text-blue-600">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                            </a>
+                                            <a href="{% url 'charities:charity_delete' charity.pk %}" class="text-red-500 hover:text-red-600">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- News Section -->
+        <div id="news-section" class="tab-content hidden">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <div class="lg:w-full">
+                    <h1 class="text-4xl font-bold mb-8 text-gray-800 dark:text-white text-center">إدارة الأخبار</h1>
+                    
+                    <!-- زر إضافة خبر جديد -->
+                    <div class="mb-6 flex justify-end">
+                        <a href="{% url 'charities:news_create' %}" 
+                           class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md transition duration-300 flex items-center">
+                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            إضافة خبر جديد
+                        </a>
+                    </div>
+
+                    <!-- جدول الأخبار -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-gray-100 dark:bg-gray-700">
+                                <tr>
+                                    <th class="px-6 py-4 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">عنوان الخبر</th>
+                                    <th class="px-6 py-4 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">الجمعية</th>
+                                    <th class="px-6 py-4 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">تاريخ النشر</th>
+                                    <th class="px-6 py-4 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">عدد المشاهدات</th>
+                                    <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600 dark:text-gray-300">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                {% for news in news_list %}
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150">
+                                    <td class="px-6 py-4 text-right">{{ news.title }}</td>
+                                    <td class="px-6 py-4 text-right">{{ news.charity.name }}</td>
+                                    <td class="px-6 py-4 text-right">{{ news.publication_date|date:"Y/m/d" }}</td>
+                                    <td class="px-6 py-4 text-right">{{ news.views_count }}</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex justify-center space-x-2 space-x-reverse">
+                                            <a href="{% url 'charities:news_edit' news.pk %}" class="text-blue-500 hover:text-blue-600">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                            </a>
+                                            <a href="{% url 'charities:news_delete' news.pk %}" class="text-red-500 hover:text-red-600">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+function switchTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+    });
+    
+    // Remove active class from all tabs
+    document.querySelectorAll('.tab-button').forEach(tab => {
+        tab.classList.remove('active', 'border-blue-500', 'text-blue-600');
+        tab.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+    });
+    
+    // Show selected tab content
+    document.getElementById(`${tabName}-section`).classList.remove('hidden');
+    
+    // Activate selected tab
+    const selectedTab = document.getElementById(`${tabName}-tab`);
+    selectedTab.classList.add('active', 'border-blue-500', 'text-blue-600');
+    selectedTab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+}
+</script>
+{% endblock %}
+
+{% endblock %}

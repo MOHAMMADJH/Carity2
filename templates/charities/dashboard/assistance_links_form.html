@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{% if form.instance.pk %}تعديل رابط المساعدة{% else %}إضافة رابط مساعدة جديد{% endif %}{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-12">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+            <h2 class="text-3xl font-bold mb-8 text-gray-800 dark:text-white text-center">
+                {% if form.instance.pk %}تعديل رابط المساعدة{% else %}إضافة رابط مساعدة جديد{% endif %}
+            </h2>
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                <!-- الجمعية -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
+                    <label for="{{ form.charity.id_for_label }}" class="block text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                        الجمعية
+                    </label>
+                    <div class="mt-1">
+                        {{ form.charity }}
+                        {% if form.charity.errors %}
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ form.charity.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- عنوان الرابط -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
+                    <label for="{{ form.title.id_for_label }}" class="block text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                        عنوان الرابط
+                    </label>
+                    <div class="mt-1">
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ form.title.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- الرابط -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
+                    <label for="{{ form.url.id_for_label }}" class="block text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                        الرابط
+                    </label>
+                    <div class="mt-1">
+                        {{ form.url }}
+                        {% if form.url.errors %}
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ form.url.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- الوصف -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
+                    <label for="{{ form.description.id_for_label }}" class="block text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                        وصف الرابط
+                    </label>
+                    <div class="mt-1">
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ form.description.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- نشط -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
+                    <div class="flex items-center">
+                        {{ form.is_active }}
+                        <label for="{{ form.is_active.id_for_label }}" class="mr-2 text-lg font-semibold text-gray-700 dark:text-gray-200">
+                            نشط
+                        </label>
+                    </div>
+                </div>
+
+                <!-- أزرار التحكم -->
+                <div class="flex justify-center space-x-4 space-x-reverse mt-8">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
+                        {% if form.instance.pk %}حفظ التغييرات{% else %}إضافة الرابط{% endif %}
+                    </button>
+                    <a href="{% url 'charities:assistance_links_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">
+                        إلغاء
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

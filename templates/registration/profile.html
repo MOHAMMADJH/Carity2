@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}الملف الشخصي{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h1 class="text-2xl font-bold mb-6">الملف الشخصي</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h2 class="text-lg font-semibold mb-3">المعلومات الشخصية</h2>
+                <dl class="space-y-2">
+                    <div>
+                        <dt class="text-gray-600">الاسم</dt>
+                        <dd class="font-medium">{{ user.get_full_name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-600">البريد الإلكتروني</dt>
+                        <dd class="font-medium">{{ user.email }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-600">رقم الهاتف</dt>
+                        <dd class="font-medium">{{ user.phone_number }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-600">رقم الهوية</dt>
+                        <dd class="font-medium">{{ user.national_id }}</dd>
+                    </div>
+                </dl>
+            </div>
+            
+            <div>
+                <h2 class="text-lg font-semibold mb-3">معلومات الحساب</h2>
+                <dl class="space-y-2">
+                    <div>
+                        <dt class="text-gray-600">نوع الحساب</dt>
+                        <dd class="font-medium">{{ user.get_user_type_display }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-600">تاريخ التسجيل</dt>
+                        <dd class="font-medium">{{ user.date_joined|date:"Y/m/d" }}</dd>
+                    </div>
+                    {% if user.charity %}
+                    <div>
+                        <dt class="text-gray-600">الجمعية</dt>
+                        <dd class="font-medium">{{ user.charity.name }}</dd>
+                    </div>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+        
+        <div class="mt-8 border-t pt-6">
+            <a href="#" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                تعديل البيانات
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

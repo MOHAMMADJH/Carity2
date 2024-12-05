@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}تقديم طلب مساعدة{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 transition duration-150">
+        <h1 class="text-2xl font-bold mb-6 dark:text-white transition duration-150">تقديم طلب مساعدة</h1>
+        
+        <form method="post" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            
+            <div class="dark:text-gray-200">
+                {{ form|crispy }}
+            </div>
+            
+            <div class="mt-6 flex items-center gap-4">
+                <button type="submit" 
+                        class="bg-green-500 dark:bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-600 dark:hover:bg-green-700 transition duration-150 focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400">
+                    تقديم الطلب
+                </button>
+                <a href="{% url 'charities:charity_list' %}" 
+                   class="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 transition duration-150">
+                    إلغاء
+                </a>
+            </div>
+        </form>
+    </div>
+    
+    <div class="bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 p-4 mt-6 transition duration-150">
+        <p class="text-blue-700 dark:text-blue-200">
+            <strong>ملاحظة هامة:</strong>
+            يرجى التأكد من صحة جميع البيانات المدخلة وإرفاق المستندات المطلوبة لتسريع عملية مراجعة طلبك.
+        </p>
+    </div>
+</div>
+
+<style>
+    /* تخصيص نمط النموذج في الوضع الداكن */
+    .dark .form-control,
+    .dark .form-select,
+    .dark .form-textarea {
+        @apply bg-gray-600 border-gray-500 text-white transition duration-150;
+    }
+    
+    .dark .form-control:focus,
+    .dark .form-select:focus,
+    .dark .form-textarea:focus {
+        @apply border-blue-400 ring-2 ring-blue-400 ring-opacity-50;
+    }
+    
+    .dark label {
+        @apply text-gray-200 transition duration-150;
+    }
+    
+    .dark .help-text {
+        @apply text-gray-300 transition duration-150;
+    }
+
+    .dark .form-check-input {
+        @apply bg-gray-600 border-gray-500;
+    }
+
+    .dark .form-check-input:checked {
+        @apply bg-blue-500 border-blue-500;
+    }
+
+    .dark .form-check-label {
+        @apply text-gray-200;
+    }
+
+    .dark .invalid-feedback {
+        @apply text-red-400;
+    }
+
+    .dark .valid-feedback {
+        @apply text-green-400;
+    }
+</style>
+{% endblock %}

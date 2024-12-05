@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}تسجيل حساب جديد{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* تخصيص شكل حقل التاريخ */
+    input[type="date"] {
+        direction: rtl;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        margin-left: 0;
+        margin-right: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h1 class="text-2xl font-bold mb-6">تسجيل حساب جديد</h1>
+        
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            {{ form|crispy }}
+            
+            <div class="mt-6">
+                <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">
+                    تسجيل
+                </button>
+                <a href="{% url 'accounts:login' %}" class="mr-4 text-gray-600 hover:text-gray-800">
+                    لديك حساب بالفعل؟ تسجيل الدخول
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

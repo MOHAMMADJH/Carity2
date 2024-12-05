@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}الرئيسية - نظام الجمعيات الخيرية{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-blue-600 dark:bg-blue-800 text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h1 class="text-4xl font-bold mb-4">منصة الجمعيات الخيرية</h1>
+            <p class="text-xl mb-8">نسهل وصول المحتاجين إلى المساعدات الإنسانية</p>
+            {% if not user.is_authenticated %}
+            <div class="space-x-4 space-x-reverse">
+                <a href="{% url 'accounts:login' %}" class="bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 px-6 py-3 rounded-md font-medium hover:bg-blue-50 dark:hover:bg-gray-700 transition duration-150">
+                    تسجيل الدخول
+                </a>
+                <a href="{% url 'accounts:register' %}" class="bg-blue-500 dark:bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-400 dark:hover:bg-blue-500 border border-white transition duration-150">
+                    إنشاء حساب جديد
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Featured Charities Section -->
+<div class="py-12 bg-gray-50 dark:bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-center mb-8 dark:text-white">جمعيات مميزة</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for charity in featured_charities %}
+                <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden transition duration-150">
+                    {% if charity.logo %}
+                        <img src="{{ charity.logo.url }}" alt="{{ charity.name }}" class="w-full h-48 object-cover">
+                    {% endif %}
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 dark:text-white">{{ charity.name }}</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">{{ charity.description|truncatewords:20 }}</p>
+                        <div class="flex items-center gap-3">
+                            <a href="{% url 'charities:charity_detail' charity.pk %}" 
+                               class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition duration-150">
+                                المزيد من التفاصيل
+                            </a>
+                            {% if charity.donation_link %}
+                            <a href="{{ charity.donation_link }}" 
+                               target="_blank"
+                               class="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 font-medium transition duration-150">
+                                تقديم مساعدة
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Aid Types Section -->
+<div class="py-12 dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-center mb-8 dark:text-white">أنواع المساعدات</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for aid_type in aid_types %}
+                <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 border-t-4 border-blue-500 transition duration-150">
+                    <h3 class="text-xl font-bold mb-2 dark:text-white">{{ aid_type.name }}</h3>
+                    <p class="text-gray-600 dark:text-gray-300">{{ aid_type.description }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- How It Works Section -->
+<div class="py-12 bg-gray-50 dark:bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-center mb-12 dark:text-white">كيف يعمل النظام</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="bg-blue-100 dark:bg-blue-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl text-blue-600 dark:text-blue-400">1</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2 dark:text-white">إنشاء حساب</h3>
+                <p class="text-gray-600 dark:text-gray-300">قم بإنشاء حساب جديد وأدخل بياناتك الشخصية</p>
+            </div>
+            <div class="text-center">
+                <div class="bg-blue-100 dark:bg-blue-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl text-blue-600 dark:text-blue-400">2</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2 dark:text-white">اختر الجمعية</h3>
+                <p class="text-gray-600 dark:text-gray-300">تصفح الجمعيات المتاحة واختر ما يناسب احتياجاتك</p>
+            </div>
+            <div class="text-center">
+                <div class="bg-blue-100 dark:bg-blue-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl text-blue-600 dark:text-blue-400">3</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2 dark:text-white">قدم طلبك</h3>
+                <p class="text-gray-600 dark:text-gray-300">قم بتقديم طلب المساعدة وانتظر الرد من الجمعية</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

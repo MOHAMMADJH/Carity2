@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}أخبار الجمعيات{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-12">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- القسم الرئيسي -->
+            <div class="lg:w-3/4">
+                <h1 class="text-4xl font-bold mb-12 text-gray-800 dark:text-white text-center">أخبار الجمعيات</h1>
+                
+                <!-- الأخبار العاجلة -->
+                {% if breaking_news %}
+                <div class="mb-16">
+                    <h2 class="text-2xl font-bold mb-8 text-red-600 dark:text-red-400 flex items-center justify-center">
+                        <svg class="w-8 h-8 ml-2 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/>
+                        </svg>
+                        الأخبار العاجلة
+                    </h2>
+                    <div class="relative">
+                        <div class="grid grid-cols-1 gap-8">
+                            {% for news in breaking_news %}
+                            <a href="{% url 'charities:news_detail' news.pk %}" class="block transform hover:scale-[1.01] transition-all duration-300">
+                                <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-2xl shadow-xl overflow-hidden relative">
+                                    <div class="md:flex">
+                                        {% if news.image %}
+                                        <div class="md:w-1/3 relative overflow-hidden">
+                                            <img src="{{ news.image.url }}" alt="{{ news.title }}" 
+                                                 class="w-full h-64 md:h-full object-cover transform hover:scale-105 transition-transform duration-500">
+                                            <div class="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent"></div>
+                                        </div>
+                                        {% endif %}
+                                        <div class="p-8 md:w-2/3 flex flex-col justify-between">
+                                            <div>
+                                                <h3 class="text-2xl font-bold text-white mb-4">{{ news.title }}</h3>
+                                                <p class="text-white/90 text-lg mb-4">{{ news.content|truncatewords:50 }}</p>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-white/80">{{ news.publication_date|date:"d/m/Y" }}</span>
+                                                <span class="text-white font-semibold">{{ news.charity.name }}</span>
+                                            </div>
+                                            <span class="absolute bottom-4 left-4 text-white/80 text-sm group-hover:translate-x-2 transition-transform duration-300">
+                                                المزيد ←
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- الأخبار المهمة -->
+                {% if important_news %}
+                <div class="mb-16">
+                    <h2 class="text-2xl font-bold mb-8 text-orange-500 dark:text-orange-400 flex items-center">
+                        <svg class="w-7 h-7 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z"/>
+                            <path d="M15 7h1a2 2 0 012 2v5.5a1.5 1.5 0 01-3 0V7z"/>
+                        </svg>
+                        الأخبار المهمة
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {% for news in important_news %}
+                        <a href="{% url 'charities:news_detail' news.pk %}" class="group block">
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300">
+                                {% if news.image %}
+                                <div class="relative overflow-hidden">
+                                    <img src="{{ news.image.url }}" alt="{{ news.title }}" 
+                                         class="w-full h-56 object-cover transform group-hover:scale-105 transition-transform duration-500">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                </div>
+                                {% endif %}
+                                <div class="p-6">
+                                    <div class="flex items-center mb-4">
+                                        <span class="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-sm px-3 py-1 rounded-full">{{ news.charity.name }}</span>
+                                        <span class="text-sm text-gray-500 dark:text-gray-400 mr-4">{{ news.publication_date|date:"d/m/Y" }}</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3 group-hover:text-orange-500 transition-colors duration-200">{{ news.title }}</h3>
+                                    <p class="text-gray-600 dark:text-gray-300">{{ news.content|truncatewords:20 }}</p>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- آخر الأخبار -->
+                <div>
+                    <h2 class="text-2xl font-bold mb-8 text-blue-500 dark:text-blue-400 flex items-center">
+                        <svg class="w-7 h-7 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z"/>
+                            <path d="M15 7h1a2 2 0 012 2v5.5a1.5 1.5 0 01-3 0V7z"/>
+                        </svg>
+                        آخر الأخبار
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {% for news in news_list %}
+                        <a href="{% url 'charities:news_detail' news.pk %}" class="group block">
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300">
+                                {% if news.image %}
+                                <div class="relative overflow-hidden">
+                                    <img src="{{ news.image.url }}" alt="{{ news.title }}" 
+                                         class="w-full h-48 object-cover transform group-hover:scale-105 transition-transform duration-500">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                                </div>
+                                {% endif %}
+                                <div class="p-6">
+                                    <div class="flex items-center mb-4">
+                                        <span class="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-sm px-3 py-1 rounded-full">{{ news.charity.name }}</span>
+                                        <span class="text-sm text-gray-500 dark:text-gray-400 mr-4">{{ news.publication_date|date:"d/m/Y" }}</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3 group-hover:text-blue-500 transition-colors duration-200">
+                                        {{ news.title }}
+                                    </h3>
+                                    <p class="text-gray-600 dark:text-gray-300 mb-4">{{ news.content|truncatewords:20 }}</p>
+                                    
+                                    <!-- الوسوم -->
+                                    {% if news.tags %}
+                                    <div class="flex flex-wrap gap-2 mt-4">
+                                        {% for tag in news.get_tags_list %}
+                                        <a href="?tag={{ tag }}" class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
+                                            {{ tag }}
+                                        </a>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+                        {% empty %}
+                        <div class="col-span-full text-center py-12">
+                            <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-8">
+                                <p class="text-gray-600 dark:text-gray-400 text-lg">لا توجد أخبار حالياً</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- الشريط الجانبي -->
+            <div class="lg:w-1/4 space-y-8">
+                <!-- التصنيفات والوسوم -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">الوسوم</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <a href="{% url 'charities:news_list' %}" 
+                           class="px-3 py-1 rounded-full text-sm {% if not selected_tag %}bg-blue-500 text-white{% else %}bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300{% endif %} hover:bg-blue-600 hover:text-white transition-colors duration-200">
+                            الكل
+                        </a>
+                        {% for tag in all_tags %}
+                        <a href="?tag={{ tag }}" 
+                           class="px-3 py-1 rounded-full text-sm {% if selected_tag == tag %}bg-blue-500 text-white{% else %}bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300{% endif %} hover:bg-blue-600 hover:text-white transition-colors duration-200">
+                            {{ tag }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- الأكثر قراءة -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">الأكثر قراءة</h3>
+                    <div class="space-y-4">
+                        {% for news in most_read_news %}
+                        <a href="{% url 'charities:news_detail' news.pk %}" class="flex items-center gap-4 group">
+                            {% if news.image %}
+                            <img src="{{ news.image.url }}" alt="{{ news.title }}" class="w-20 h-20 rounded-lg object-cover">
+                            {% endif %}
+                            <div>
+                                <h4 class="font-medium text-gray-800 dark:text-white group-hover:text-blue-500 transition-colors duration-200">{{ news.title }}</h4>
+                                <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                    <span class="ml-2">{{ news.views_count }} مشاهدة</span>
+                                    <span class="mx-1">•</span>
+                                    <span>{{ news.publication_date|date:"d/m/Y" }}</span>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

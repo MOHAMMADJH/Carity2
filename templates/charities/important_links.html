@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}أهم الروابط{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-2xl font-bold mb-6 dark:text-white">أهم الروابط</h1>
+    
+    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
+        <div class="space-y-6">
+            <!-- قسم روابط المساعدة -->
+            <div>
+                <h2 class="text-xl font-semibold mb-4 dark:text-white">روابط المساعدة</h2>
+                <div class="grid gap-4">
+                    {% for link in assistance_links %}
+                    <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-600 rounded-lg">
+                        <div class="flex flex-col">
+                            <span class="font-medium dark:text-white">{{ link.title }}</span>
+                            <span class="text-sm text-gray-500 dark:text-gray-300">{{ link.charity.name }}</span>
+                        </div>
+                        <a href="{{ link.url }}" 
+                           target="_blank"
+                           class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-150">
+                            تقديم مساعدة
+                        </a>
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-gray-500 dark:text-gray-300">
+                        لا توجد روابط مساعدة متاحة حالياً
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- قسم الأخبار المهمة -->
+            <div>
+                <h2 class="text-xl font-semibold mb-4 dark:text-white">آخر الأخبار المهمة</h2>
+                <div class="space-y-4">
+                    {% for news in latest_news %}
+                    <div class="p-4 bg-gray-50 dark:bg-gray-600 rounded-lg">
+                        <h3 class="font-medium dark:text-white">{{ news.title }}</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mt-2">{{ news.content|truncatewords:30 }}</p>
+                        <a href="{% url 'charities:news_detail' news.pk %}" 
+                           class="text-blue-500 hover:text-blue-600 mt-2 inline-block">
+                            اقرأ المزيد
+                        </a>
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-gray-500 dark:text-gray-300">
+                        لا توجد أخبار مهمة حالياً
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

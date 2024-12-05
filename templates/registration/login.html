@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}تسجيل الدخول{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h1 class="text-2xl font-bold mb-6">تسجيل الدخول</h1>
+        
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            {{ form|crispy }}
+            
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+            
+            <div class="mt-6">
+                <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 w-full">
+                    دخول
+                </button>
+            </div>
+            
+            <div class="mt-4 text-center">
+                <a href="{% url 'accounts:register' %}" class="text-blue-600 hover:text-blue-800">
+                    ليس لديك حساب؟ سجل الآن
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
